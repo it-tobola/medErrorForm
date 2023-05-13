@@ -1,0 +1,4 @@
+pandas
+notion_df
+streamlit
+uuid
