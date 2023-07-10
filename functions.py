@@ -43,7 +43,6 @@ corrective_actions = ["Paycom Performance Discussion Form",
 def location_filter(program):
 
     db = individuals_db[["FN", "Program", "MCI#"]]
-    ids = []
     options = []
 
     for i, row in db.iterrows():
