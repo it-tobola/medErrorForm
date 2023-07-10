@@ -63,7 +63,6 @@ with tab2:
             service_recipient = st.multiselect("Service Recipient", options=f.location_filter(site))
         with r:
             grouping = st.radio("Show data by:", options=f.viz_options)
-    st.write(site)
     f.viz_filters(site, service_recipient, grouping)
 
 
