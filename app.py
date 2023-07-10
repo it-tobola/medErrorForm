@@ -1,12 +1,11 @@
-import pandas as pd
 import streamlit as st
 import functions as f
 
 st.set_page_config(page_title="TOBOLA Medication Errors", layout='wide')
 
-tab1, tab2, tab3= st.tabs(["Submission", "Analyze & Review", "Archive"])
+tab1, tab2, tab3 = st.tabs(["Submission", "Analyze & Review", "Archive"])
 
-#Submission Form
+# Submission Form
 with tab1:
 
     st.header('TOBOLA Med Error Reporting Form')
@@ -53,7 +52,7 @@ with tab1:
             f.submission(ss=st.session_state, individual=individual, ee=ee_list, date=error_date, ca_date=ca_date)
             st.success("Report Submitted!")
 
-#Data Visualization
+# Data Visualization
 with tab2:
     # Filters
     with st.container():
@@ -65,12 +64,7 @@ with tab2:
         with r:
             grouping = st.radio("Show data by:", options=f.viz_options)
     st.write(site)
-    viz_filter = f.viz_filters(site, service_recipient)
-    if grouping == "Program":
-        st.bar_chart(data=viz_filter, x=viz_filter["Work Locations"].unique())
-
-
-
+    f.viz_filters(site, service_recipient, grouping)
 
 
 with tab3:

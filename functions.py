@@ -111,7 +111,7 @@ def submission(ss, individual, date, ee, ca_date):
 
 
 # Visiual Filters
-def viz_filters(site, individual):
+def viz_filters(site, individual, grouping):
 
     if site == "ALL":
         filtered_errors = med_errors
@@ -123,4 +123,8 @@ def viz_filters(site, individual):
     else:
         filtered_errors = filtered_errors[format(individual) in filtered_errors["Individual"]]
 
-    return filtered_errors
+    if grouping == "Program":
+        return st.bar_chart(data=filtered_errors, x="Work Locations")
+    elif grouping == "Service Recipient":
+        return st.bar_chart(data=filtered_errors, x="SR")
+
