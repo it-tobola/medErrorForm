@@ -66,7 +66,7 @@ with tab2:
             grouping = st.radio("Show data by:", options=f.viz_options)
     viz_filter = f.viz_filters(site, service_recipient)
     if grouping == "Program":
-        st.bar_chart(data=viz_filter, x="Work Location")
+        st.bar_chart(data=viz_filter, x="Work Locations")
 
 
 
