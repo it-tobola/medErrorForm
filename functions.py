@@ -51,7 +51,7 @@ viz_options = ["Program",
 # Location filter to find the relevant individuals
 def location_filter(program):
 
-    db = individuals_db[["FN", "Program", "MCI#"]]
+    db = individuals_db[["FN", "Program", "Active"]]
     options = []
     if program != "ALL":
         for i, row in db.iterrows():
