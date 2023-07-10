@@ -129,14 +129,14 @@ def viz_filters(site, individuals, grouping):
     for sr in individuals:
         for i, row in location_filter:
             if sr in row["SR"]:
-                sr_filter.append(row)
+                sr_filter = sr_filter.append(row)
 
     filtered_errors = pd.DataFrame()
     for i, row in sr_filter.iterrows():
         dsps = row["Staff Involved"]
         for dsp in dsps:
             row["Staff Involved"] = dsp
-            filtered_errors.append(row)
+            filtered_errors = filtered_errors.append(row)
 
     if grouping == "Program":
         st.write(filtered_errors.columns)
