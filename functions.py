@@ -139,7 +139,7 @@ def viz_filters(site, individuals, grouping):
             filtered_errors.append(row)
 
     if grouping == "Program":
-        filtered_errors = filtered_errors.groupby(["Work Locations"]).count()
+        filtered_errors = filtered_errors.groupby(filtered_errors["Work Locations"]).count()
         return st.bar_chart(data=filtered_errors)
     elif grouping == "Service Recipient":
         return st.bar_chart(data=filtered_errors, x="SR")
