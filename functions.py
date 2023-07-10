@@ -116,7 +116,7 @@ def viz_filters(site, individual, grouping):
     if site == "ALL":
         filtered_errors = med_errors
     else:
-        filtered_errors = med_errors[med_errors["Work Locations"] == [site]]
+        filtered_errors = med_errors[med_errors["Work Locations"] == site]
 
     if site == "ALL":
         filtered_errors = filtered_errors
