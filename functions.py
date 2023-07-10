@@ -16,6 +16,7 @@ med_errors = pd.read_notion(errors_id, api_key=api_key, resolve_relation_values=
 locations_db = pd.read_notion(locations_db_id, api_key=api_key, resolve_relation_values=True)
 current_locations = locations_db["Name"][locations_db.Status == "Active"]
 current_locations = current_locations.to_list()
+current_locations += ["ALL"]
 
 individuals_db = pd.read_notion(individuals_db_id, api_key=api_key, resolve_relation_values=True)
 
@@ -40,7 +41,11 @@ error_types = ["Wrong Dose",
 corrective_actions = ["Paycom Performance Discussion Form",
                       "In house retraining",
                       "Sent back for LLAM retraining"]
-
+# Visualization Options
+viz_options = ["Program",
+               "Staff Member",
+               "Month",
+               "Service Recipient"]
 
 # Location filter to find the relevant individuals
 def location_filter(program):
@@ -103,3 +108,19 @@ def submission(ss, individual, date, ee, ca_date):
     except:
         pass
     submission.to_notion(errors_url, title=individual, api_key=api_key, resolve_relation_values=True)
+
+
+# Visiual Filters
+def viz_filters(site, individual):
+
+    if site == "ALL":
+        filtered_errors = med_errors
+    else:
+        filtered_errors = med_errors[med_errors["Work Locations"] == [site]]
+
+    if site == "ALL":
+        filtered_errors = filtered_errors
+    else:
+        filtered_errors = filtered_errors[individual in filtered_errors["Individual"]]
+
+    return filtered_errors

@@ -55,8 +55,22 @@ with tab1:
 
 #Data Visualization
 with tab2:
-    st.write("coming soon")
-    med_errors = f.med_errors
+    # Filters
+    with st.container():
+        l, c, r = st.columns(3)
+        with l:
+            site = st.selectbox("Program", options=f.current_locations)
+        with c:
+            service_recipient = st.radio("Service Recipient", options=f.location_filter(site))
+        with r:
+            grouping = st.radio("Show data by:", options=f.viz_options)
+    viz_filter = f.viz_filters(site, service_recipient)
+    if grouping == "Program":
+        st.bar_chart(data=viz_filter, x="Work Location")
+
+
+
+
 
 with tab3:
-    st.dataframe(med_errors)
+    st.dataframe(f.med_errors)
