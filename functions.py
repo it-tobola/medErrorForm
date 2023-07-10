@@ -47,15 +47,20 @@ viz_options = ["Program",
                "Month",
                "Service Recipient"]
 
+
 # Location filter to find the relevant individuals
 def location_filter(program):
 
     db = individuals_db[["FN", "Program", "MCI#"]]
     options = []
-
-    for i, row in db.iterrows():
-        formatted_site = format(row['Program'])
-        if program == formatted_site:
+    if program != "ALL":
+        for i, row in db.iterrows():
+            formatted_site = format(row['Program'])
+            if program == formatted_site:
+                name = format(row["FN"])
+                options += [name]
+    else:
+        for i, row in db.iterrows():
             name = format(row["FN"])
             options += [name]
 
@@ -73,7 +78,6 @@ def staff_selection(staff):
         for i, row in ee_code.iterrows():
             if row["Full Name"] == name:
                 ee_list += [row["EE Code"]]
-
 
     return ee_list
 
@@ -128,4 +132,3 @@ def viz_filters(site, individual, grouping):
         return st.bar_chart(data=filtered_errors)
     elif grouping == "Service Recipient":
         return st.bar_chart(data=filtered_errors, x="SR")
-
