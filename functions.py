@@ -115,20 +115,31 @@ def submission(ss, individual, date, ee, ca_date):
 
 
 # Visiual Filters
-def viz_filters(site, individual, grouping):
+def viz_filters(site, individuals, grouping):
 
-    if site == "ALL":
-        filtered_errors = med_errors
-    else:
-        filtered_errors = med_errors[med_errors["Work Locations"] == site]
+    mci = individuals_db[["FN", "MCI#"]]
 
+    location_filter = pd.DataFrame()
     if site == "ALL":
-        filtered_errors = filtered_errors
+        location_filter = med_errors
     else:
-        filtered_errors = filtered_errors[format(individual) in filtered_errors["Individual"]]
+        location_filter = (med_errors[med_errors["Work Locations"] == site])
+
+    sr_filter = pd.DataFrame()
+    for sr in individuals:
+        for i, row in location_filter:
+            if sr in row["SR"]:
+                sr_filter.append(row)
+
+    filtered_errors = pd.DataFrame()
+    for i, row in sr_filter.iterrows():
+        dsps = row["Staff Involved"]
+        for dsp in dsps:
+            row["Staff Involved"] = dsp
+            filtered_errors.append(row)
 
     if grouping == "Program":
-        filtered_errors = filtered_errors.groupby(["Work Locations"][0]).count()
+        filtered_errors = filtered_errors.groupby(["Work Locations"]).count()
         return st.bar_chart(data=filtered_errors)
     elif grouping == "Service Recipient":
         return st.bar_chart(data=filtered_errors, x="SR")

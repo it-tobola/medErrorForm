@@ -60,7 +60,7 @@ with tab2:
         with l:
             site = st.selectbox("Program", options=f.current_locations)
         with c:
-            service_recipient = st.radio("Service Recipient", options=f.location_filter(site))
+            service_recipient = st.multiselect("Service Recipient", options=f.location_filter(site))
         with r:
             grouping = st.radio("Show data by:", options=f.viz_options)
     st.write(site)
