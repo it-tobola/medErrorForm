@@ -14,7 +14,7 @@ l, c, r = st.columns(3)
 
 # Individual, Date, & Error Type Selection
 with l:
-    individual_list, mci = f.location_filter(program)
+    individual_list = f.location_filter(program)
     individual = st.radio("Select Individual", options=individual_list, key='Individual')
 with c:
     error_date = st.date_input("Date of Error", key='Date of Error')
