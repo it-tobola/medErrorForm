@@ -71,7 +71,7 @@ def staff_selection(staff):
 
 
 # Submission function to close the report
-def submission(ss, individual, date, ee, ca_date, mci):
+def submission(ss, individual, date, ee, ca_date):
     import random
     import string
 
