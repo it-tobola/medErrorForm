@@ -61,9 +61,9 @@ def location_filter(program):
                 options += [name]
     else:
         for i, row in db.iterrows():
-            name = format(row["FN"])
-            options += [name]
-
+            if row["Active"]:
+                name = format(row["FN"])
+                options += [name]
     return options
 
 
@@ -128,7 +128,7 @@ def viz_filters(site, individual, grouping):
         filtered_errors = filtered_errors[format(individual) in filtered_errors["Individual"]]
 
     if grouping == "Program":
-        filtered_errors = filtered_errors.groupby(["Work Locations"]).count()
+        filtered_errors = filtered_errors.groupby(["Work Locations"][0]).count()
         return st.bar_chart(data=filtered_errors)
     elif grouping == "Service Recipient":
         return st.bar_chart(data=filtered_errors, x="SR")
