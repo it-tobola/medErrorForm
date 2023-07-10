@@ -14,8 +14,6 @@ locations_db = pd.read_notion(locations_db_id, api_key=api_key, resolve_relation
 current_locations = locations_db["Name"][locations_db.Status == "Active"]
 current_locations = current_locations.to_list()
 
-
-
 individuals_db = pd.read_notion(individuals_db_id, api_key=api_key, resolve_relation_values=True)
 
 employees_db = pd.read_notion(employees_id, api_key=api_key)
@@ -44,13 +42,14 @@ corrective_actions = ["Paycom Performance Discussion Form",
 # Location filter to find the relevant individuals
 def location_filter(program):
 
-    db = individuals_db[["First Name", "Program"]]
+    db = individuals_db[["FN", "Program", "MCI#"]]
+    ids = []
     options = []
 
     for i, row in db.iterrows():
         formatted_site = format(row['Program'])
         if program == formatted_site:
-            name = format(row["First Name"])
+            name = format(row["FN"])
             options += [name]
 
     return options
@@ -73,7 +72,7 @@ def staff_selection(staff):
 
 
 # Submission function to close the report
-def submission(ss, individual, date, ee, ca_date):
+def submission(ss, individual, date, ee, ca_date, mci):
     import random
     import string
 
@@ -87,9 +86,8 @@ def submission(ss, individual, date, ee, ca_date):
     date = format(date)
     ca_date = format(ca_date)
 
-
     submission = pd.DataFrame()
-    submission["Individual"] = [individual]
+    submission["Individual"] = individuals_db['MCI#'][individuals_db["FN"]==individual]
     submission["ID"] = id
     submission["Work Locations"] = [ss["Work Locations"]]
     submission["Date of Error"] = date

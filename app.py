@@ -14,7 +14,7 @@ l, c, r = st.columns(3)
 
 # Individual, Date, & Error Type Selection
 with l:
-    individual_list = f.location_filter(program)
+    individual_list, mci = f.location_filter(program)
     individual = st.radio("Select Individual", options=individual_list, key='Individual')
 with c:
     error_date = st.date_input("Date of Error", key='Date of Error')
@@ -45,6 +45,6 @@ submit = st.button("Submit Form", use_container_width=True)
 if submit:
     with st.spinner("Submitting Report. Please Wait."):
         ee_list = f.staff_selection(staff)
-        f.submission(ss=st.session_state, individual=individual, ee=ee_list, date=error_date, ca_date=ca_date)
+        f.submission(ss=st.session_state, individual=individual, ee=ee_list, date=error_date, ca_date=ca_date, mci=mci)
         st.success("Report Submitted!")
 
