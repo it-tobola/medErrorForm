@@ -35,7 +35,7 @@ error_types = ["Wrong Dose",
                 "Wrong Time",
                 "Wrong Route",
                 "Wrong Medication",
-                "Medication Ommission",
+                "Medication Omission",
                 "Other"]
 # Corrective Action Options
 corrective_actions = ["Paycom Performance Discussion Form",
@@ -94,7 +94,7 @@ def submission(ss, individual, date, ee, ca_date):
     ca_date = format(ca_date)
 
     submission = pd.DataFrame()
-    submission["Individual"] = individuals_db['MCI#'][individuals_db["FN"]==individual]
+    submission["Individual"] = individuals_db['MCI#'][individuals_db["FN"] == individual]
     submission["ID"] = id
     submission["Work Locations"] = [ss["Work Locations"]]
     submission["Date of Error"] = date
@@ -124,7 +124,8 @@ def viz_filters(site, individual, grouping):
         filtered_errors = filtered_errors[format(individual) in filtered_errors["Individual"]]
 
     if grouping == "Program":
-        return st.bar_chart(data=filtered_errors, x="Work Locations")
+        filtered_errors = filtered_errors.groupby(["Work Locations"]).count()
+        return st.bar_chart(data=filtered_errors)
     elif grouping == "Service Recipient":
         return st.bar_chart(data=filtered_errors, x="SR")
 
