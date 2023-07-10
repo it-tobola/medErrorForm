@@ -121,6 +121,6 @@ def viz_filters(site, individual):
     if site == "ALL":
         filtered_errors = filtered_errors
     else:
-        filtered_errors = filtered_errors[[individual] in filtered_errors["Individual"]]
+        filtered_errors = filtered_errors[format(individual) in filtered_errors["Individual"]]
 
     return filtered_errors
