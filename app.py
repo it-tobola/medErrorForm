@@ -45,6 +45,6 @@ submit = st.button("Submit Form", use_container_width=True)
 if submit:
     with st.spinner("Submitting Report. Please Wait."):
         ee_list = f.staff_selection(staff)
-        f.submission(ss=st.session_state, individual=individual, ee=ee_list, date=error_date, ca_date=ca_date, mci=mci)
+        f.submission(ss=st.session_state, individual=individual, ee=ee_list, date=error_date, ca_date=ca_date)
         st.success("Report Submitted!")
 
