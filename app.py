@@ -4,7 +4,7 @@ import functions as f
 
 st.set_page_config(page_title="TOBOLA Medication Errors", layout='wide')
 
-tab1, tab2 tab3= st.tabs(["Submission", "Analyze & Review", "Archive"])
+tab1, tab2, tab3= st.tabs(["Submission", "Analyze & Review", "Archive"])
 
 #Submission Form
 with tab1:
@@ -57,4 +57,6 @@ with tab1:
 with tab2:
     st.write("coming soon")
     med_errors = f.med_errors
+
+with tab3:
     st.dataframe(med_errors)
