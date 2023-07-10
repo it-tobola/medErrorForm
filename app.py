@@ -2,9 +2,9 @@ import pandas as pd
 import streamlit as st
 import functions as f
 
-st.set_page_config(layout='wide')
+st.set_page_config(page_title="TOBOLA Medication Errors", layout='wide')
 
-tab1, tab2 = st.tabs(["Submission", "Analyze"])
+tab1, tab2 tab3= st.tabs(["Submission", "Analyze & Review", "Archive"])
 
 #Submission Form
 with tab1:
@@ -56,3 +56,5 @@ with tab1:
 #Data Visualization
 with tab2:
     st.write("coming soon")
+    med_errors = f.med_errors
+    st.dataframe(med_errors)

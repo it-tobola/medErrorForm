@@ -10,6 +10,9 @@ locations_db_id = st.secrets["notion_keys"]["locations_db_id"]
 individuals_db_id = st.secrets["notion_keys"]["individuals_db_id"]
 employees_id = st.secrets["notion_keys"]["employees_id"]
 
+med_errors = pd.read_notion(errors_id, api_key=api_key, resolve_relation_values=True)
+
+
 locations_db = pd.read_notion(locations_db_id, api_key=api_key, resolve_relation_values=True)
 current_locations = locations_db["Name"][locations_db.Status == "Active"]
 current_locations = current_locations.to_list()
