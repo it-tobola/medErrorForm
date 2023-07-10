@@ -85,6 +85,7 @@ def submission(ss, individual, date, ee, ca_date):
 
     id = format(individual[0]+format([ss["Work Locations"][0]])[2:-2]+get_random_string(6))
     date = format(date)
+    ca_date = format(ca_date)
 
 
     submission = pd.DataFrame()
