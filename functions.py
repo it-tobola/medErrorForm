@@ -3,7 +3,6 @@ import datetime
 import streamlit as st
 import pandas as pd
 import notion_df as nd
-import keys
 
 nd.pandas()
 
@@ -15,6 +14,7 @@ try:
     individuals_db_id = st.secrets["notion_keys"]["individuals_db_id"]
     employees_id = st.secrets["notion_keys"]["employees_id"]
 except:
+    import keys
     api_key = keys.api_key
     errors_url = keys.errors_url
     errors_id = keys.errors_id
