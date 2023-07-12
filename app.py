@@ -1,7 +1,8 @@
 import streamlit as st
+st.set_page_config(page_title="TOBOLA Medication Errors", layout='wide')
+
 import functions as f
 
-st.set_page_config(page_title="TOBOLA Medication Errors", layout='wide')
 
 tab1, tab2, tab3 = st.tabs(["Submission", "Analyze & Review", "Archive"])
 
@@ -19,7 +20,7 @@ with tab1:
     # Individual, Date, & Error Type Selection
     with l:
         individual_list = f.location_filter(program)
-        individual = st.radio("Select Individual", options=individual_list, key='Individual')
+        individual = st.selectbox("Select Individual", options=individual_list, key='Individual')
     with c:
         error_date = st.date_input("Date of Error", key='Date of Error')
     with r:
@@ -60,11 +61,17 @@ with tab2:
         with l:
             site = st.selectbox("Program", options=f.current_locations)
         with c:
-            service_recipient = st.multiselect("Service Recipient", options=f.location_filter(site))
+            service_recipient = st.multiselect("Service Recipient", options=["ALL"]+f.location_filter(site))
         with r:
             grouping = st.radio("Show data by:", options=f.viz_options)
-    f.viz_filters(site, service_recipient, grouping)
+    st.write("---")
+    with st.container():
+        f.viz_filters(site, service_recipient, grouping)
 
 
 with tab3:
-    st.dataframe(f.med_errors)
+    try:
+        st.dataframe(f.med_errors["SR.", "Site", "Date of Error", "Staff", "Error Type", "Other", "Description",
+                     "Corrective Action", "CA Date"])
+    except KeyError:
+        pass

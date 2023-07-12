@@ -1,22 +1,37 @@
+import datetime
+
 import streamlit as st
 import pandas as pd
 import notion_df as nd
+import keys
+
 nd.pandas()
 
-api_key = st.secrets["notion_keys"]["api_key"]
-errors_url = st.secrets["notion_keys"]["errors_url"]
-errors_id = st.secrets["notion_keys"]["errors_id"]
-locations_db_id = st.secrets["notion_keys"]["locations_db_id"]
-individuals_db_id = st.secrets["notion_keys"]["individuals_db_id"]
-employees_id = st.secrets["notion_keys"]["employees_id"]
-
-med_errors = pd.read_notion(errors_id, api_key=api_key, resolve_relation_values=True)
-
+try:
+    api_key = st.secrets["notion_keys"]["api_key"]
+    errors_url = st.secrets["notion_keys"]["errors_url"]
+    errors_id = st.secrets["notion_keys"]["errors_id"]
+    locations_db_id = st.secrets["notion_keys"]["locations_db_id"]
+    individuals_db_id = st.secrets["notion_keys"]["individuals_db_id"]
+    employees_id = st.secrets["notion_keys"]["employees_id"]
+except:
+    api_key = keys.api_key
+    errors_url = keys.errors_url
+    errors_id = keys.errors_id
+    locations_db_id = keys.locations_db_id
+    individuals_db_id = keys.individuals_db_id
+    employees_id = keys.employees_id
 
 locations_db = pd.read_notion(locations_db_id, api_key=api_key, resolve_relation_values=True)
 current_locations = locations_db["Name"][locations_db.Status == "Active"]
 current_locations = current_locations.to_list()
-current_locations += ["ALL"]
+all = ["ALL"]
+all += current_locations
+current_locations = all
+
+
+med_errors = pd.read_notion(errors_id, api_key=api_key, resolve_relation_values=True)
+
 
 individuals_db = pd.read_notion(individuals_db_id, api_key=api_key, resolve_relation_values=True)
 
@@ -45,7 +60,7 @@ corrective_actions = ["Paycom Performance Discussion Form",
 viz_options = ["Program",
                "Staff Member",
                "Month",
-               "Service Recipient"]
+               "Error Type"]
 
 
 # Location filter to find the relevant individuals
@@ -99,7 +114,7 @@ def submission(ss, individual, date, ee, ca_date):
 
     submission = pd.DataFrame()
     submission["Individual"] = individuals_db['MCI#'][individuals_db["FN"] == individual]
-    submission["ID"] = id
+    submission["ID"] = individual
     submission["Work Locations"] = [ss["Work Locations"]]
     submission["Date of Error"] = date
     submission["Error Type"] = [ss["Error Type"]]
@@ -117,31 +132,65 @@ def submission(ss, individual, date, ee, ca_date):
 # Visiual Filters
 def viz_filters(site, individuals, grouping):
 
-    mci = individuals_db[["FN", "MCI#"]]
+    location_filter = med_errors
 
-    location_filter = pd.DataFrame()
     if site == "ALL":
-        location_filter = med_errors
+        location_filter = location_filter
     else:
-        location_filter = (med_errors[med_errors["Work Locations"] == site])
+        location_filter = location_filter[med_errors["Site"] == site]
 
-    sr_filter = pd.DataFrame()
-    for sr in individuals:
-        for i, row in location_filter:
-            if sr in row["SR"]:
-                sr_filter = sr_filter.append(row)
+    all = "ALL"
+    if all in individuals:
+        sr_filter = location_filter
+    else:
+        sr_filter = location_filter[location_filter["SR."].isin(individuals)]
 
-    filtered_errors = pd.DataFrame()
+    filtered_errors = pd.DataFrame()  # Initialize an empty DataFrame
+
     for i, row in sr_filter.iterrows():
         dsps = row["Staff Involved"]
         for dsp in dsps:
-            row["Staff Involved"] = dsp
-            filtered_errors = filtered_errors.append(row)
+            new_row = row.copy()  # Create a copy of the current row
+            new_row["Staff Involved"] = dsp  # Update the "Staff Involved" value
+            filtered_errors = pd.concat([filtered_errors, new_row.to_frame().T], ignore_index=True)
 
-    if grouping == "Program":
-        st.dataframe(location_filter)
+    for i, row in filtered_errors.iterrows():
+        ee_code = row["Staff Involved"]
+        date = row["Date of Error"]
+        full_name = employees_db.loc[employees_db["EE Code"] == ee_code, "Full Name"].iloc[0]
+        filtered_errors.at[i, "Staff"] = full_name
 
-        filtered_errors = filtered_errors.groupby(filtered_errors["Work Locations"]).count()
-        return st.bar_chart(data=filtered_errors)
-    elif grouping == "Service Recipient":
-        return st.bar_chart(data=filtered_errors, x="SR")
+    try:
+        filtered_errors = filtered_errors[["Site",
+                                       "SR.",
+                                       "Staff",
+                                       "Date of Error",
+                                       "Error Type"]]
+        st.dataframe(filtered_errors, use_container_width=True)
+    except:
+        pass
+
+    try:
+        filtered_errors["Month"] = pd.to_datetime(filtered_errors["Date of Error"]).dt.month
+    except KeyError:
+        pass
+
+    try:
+        if grouping == "Program":
+            program_counts = filtered_errors.groupby("Site").size().reset_index(name="Med Errors")
+            return st.bar_chart(data=program_counts, x="Site",  y="Med Errors")
+        elif grouping == "Staff Member":
+            program_counts = filtered_errors.groupby("Staff").size().reset_index(name="Med Errors")
+            return st.bar_chart(data=program_counts, x="Staff", y="Med Errors")
+        elif grouping == "Month":
+            program_counts = filtered_errors.groupby("Month").size().reset_index(name="Med Errors")
+            return st.bar_chart(data=program_counts, x="Month", y="Med Errors")
+        elif grouping == "Error Type":
+            program_counts = filtered_errors.groupby("Error Type").size().reset_index(name="Med Errors")
+            return st.bar_chart(data=program_counts, x="Error Type", y="Med Errors")
+    except:
+        pass
+
+
+# TODO Archive Filters (tab3)
+
