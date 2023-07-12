@@ -99,16 +99,7 @@ def staff_selection(staff):
 
 # Submission function to close the report
 def submission(ss, individual, date, ee, ca_date):
-    import random
-    import string
 
-    def get_random_string(length):
-        # choose from all lowercase letter
-        letters = string.ascii_uppercase
-        result_str = ''.join(random.choice(letters) for i in range(length))
-        return result_str
-
-    id = format(individual[0]+format([ss["Work Locations"][0]])[2:-2]+get_random_string(6))
     date = format(date)
     ca_date = format(ca_date)
 
